@@ -17,15 +17,9 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23221812'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='36' fill='%23c8a15c' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E">
 <style>
   /* ————— FONTY —————
-     Aviano Regular: font komercyjny, self-hosted. Pliki wrzucić do assets/fonts/
-     (Aviano-Regular.woff2 + opcjonalnie .otf). Dopóki ich nie ma, przeglądarka
-     używa zapasowego Cormorant Garamond. */
-  @font-face{
-    font-family:"Aviano";
-    src:url("assets/fonts/Aviano-Regular.woff2") format("woff2"),
-        url("assets/fonts/Aviano-Regular.otf") format("opentype");
-    font-weight:400;font-style:normal;font-display:swap;
-  }
+     Aviano (nagłówki) ładowane z Adobe Fonts: wkleić w <head> linijkę
+     <link rel="stylesheet" href="https://use.typekit.net/XXXXXXX.css"> z Web Project
+     Klaudii. Dopóki jej nie ma, działa zapasowy Cormorant Garamond. */
   /* ————— KONFIGURACJA SPRZEDAŻY: patrz <script> na dole pliku ————— */
   :root{
     --ink:#221812;          /* czekoladowy brąz */
@@ -462,7 +456,7 @@
   <div class="wrap">
     <figure class="author-photo">
       <img src="assets/klaudia.jpg" alt="Klaudia Stecz — Studio Clauré" loading="lazy">
-      <figcaption>Studio Clauré · Warszawa</figcaption>
+      <figcaption>Studio Clauré · Mława</figcaption>
     </figure>
     <div>
       <p class="eyebrow">Autorka</p>
