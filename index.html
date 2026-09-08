@@ -274,6 +274,31 @@
   .offer .btn{margin-top:42px;padding:20px 54px}
   .pay-note{margin-top:22px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(239,233,222,.45)}
 
+  /* ————— formularz zamówienia (wymogi regulaminu: podsumowanie, akceptacja, oświadczenie) ————— */
+  .order{margin-top:44px;text-align:left;border-top:1px solid rgba(200,161,92,.2);padding-top:34px}
+  .order-title{font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+  .summary{display:grid;grid-template-columns:104px 1fr;gap:10px 18px;font-size:11.5px;line-height:1.65;color:rgba(239,233,222,.72)}
+  .summary dt{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);padding-top:2px}
+  .summary dd{margin:0}
+  .summary a{color:rgba(239,233,222,.9)}
+  .promo{margin-top:16px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+  .promo small{display:block;margin-top:6px;font-size:10px;letter-spacing:.08em;text-transform:none;color:rgba(239,233,222,.5)}
+  .checks{margin-top:30px;border-top:1px solid rgba(200,161,92,.14);padding-top:10px}
+  .check{display:flex;gap:14px;align-items:flex-start;margin-top:18px;font-size:11.5px;line-height:1.65;color:rgba(239,233,222,.86);cursor:pointer}
+  .check input{
+    appearance:none;-webkit-appearance:none;flex:0 0 auto;width:18px;height:18px;margin-top:4px;
+    border:1px solid var(--gold);background:transparent;cursor:pointer;position:relative;
+  }
+  .check input:checked{background:var(--gold)}
+  .check input:checked::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid var(--ink);border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .check input:focus-visible{outline:2px solid var(--gold-bright);outline-offset:2px}
+  .check a{color:var(--gold-bright)}
+  .check-hint{margin:8px 0 0 32px;font-size:10.5px;line-height:1.6;color:rgba(239,233,222,.5)}
+  .order-actions{text-align:center}
+  .order-actions .btn[aria-disabled="true"]{opacity:.35;cursor:not-allowed}
+  .foot-legal{width:100%;margin-top:34px;padding-top:24px;border-top:1px solid rgba(200,161,92,.14);font-size:10.5px;line-height:1.75;color:rgba(239,233,222,.42)}
+  .foot-legal a{color:rgba(239,233,222,.62)}
+
   /* ————— warsztaty ————— */
   .ws{background:var(--paper);color:var(--paper-ink)}
   .ws .eyebrow{color:#8a6a38}
@@ -292,7 +317,7 @@
   footer{background:#170f0b;border-top:1px solid var(--line-dark);padding:60px 0}
   footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:26px;flex-wrap:wrap}
   footer .brand{font-size:12px}
-  .foot-links{display:flex;gap:34px}
+  .foot-links{display:flex;flex-wrap:wrap;gap:12px 34px}
   .foot-links a{color:rgba(239,233,222,.65);font-size:11px;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;transition:.3s}
   .foot-links a:hover{color:var(--gold)}
   .copy{font-size:10px;letter-spacing:.2em;color:rgba(239,233,222,.35);text-transform:uppercase}
@@ -315,6 +340,9 @@
     .hero h1{font-size:clamp(24px,7vw,34px)}
     header{padding:20px}
     .top-cta{display:none}
+    .summary{grid-template-columns:1fr;gap:2px 0}
+    .summary dt{margin-top:12px}
+    .order-actions .btn{padding:18px 30px}
   }
   @media(prefers-reduced-motion:reduce){
     .rise,.toc-item,.shot,.who-card{animation:none;opacity:1;transform:none;transition:none}
@@ -342,7 +370,7 @@
         <span>PDF · po polsku</span>
       </div>
       <div class="cta-row rise d5">
-        <a class="btn js-buy" href="#kup">Kup e-booka</a>
+        <a class="btn" href="#kup">Kup e-booka</a>
         <a class="btn-ghost" href="#srodek">Zobacz, co w środku</a>
       </div>
     </div>
@@ -492,8 +520,46 @@
         <li>Generowanie zdjęć i wideo krok po kroku</li>
         <li>Moje sprawdzone wskazówki z codziennej pracy z AI</li>
       </ul>
-      <a class="btn js-buy" href="#kup">Kup e-booka</a>
-      <p class="pay-note js-paynote"></p>
+      <p class="promo js-promo" hidden></p>
+
+      <div class="order" id="zamowienie">
+        <p class="order-title">Podsumowanie zamówienia</p>
+        <dl class="summary">
+          <dt>Produkt</dt>
+          <dd>E-book „Creative AI Branding Course” — plik PDF, 35 stron, po polsku, z warstwą tekstową (tekst można zaznaczać, wyszukiwać i powiększać).</dd>
+          <dt>Cena</dt>
+          <dd class="js-price-inline"></dd>
+          <dt>Płatność</dt>
+          <dd class="js-pay-method"></dd>
+          <dt>Dostawa</dt>
+          <dd>Plik PDF na Twój adres e-mail, bez kosztów wysyłki — bez zbędnej zwłoki po zaksięgowaniu płatności, zwykle w ciągu 24 godzin. Bez zgody z pola 2 poniżej: po upływie 14 dni od zawarcia umowy.</dd>
+          <dt>Wymagania</dt>
+          <dd>Urządzenie z dostępem do internetu, aktywny adres e-mail i program do otwierania plików PDF.</dd>
+          <dt>Umowa</dt>
+          <dd>Jednorazowy zakup, bez abonamentu. Licencja na własny użytek osobisty lub wewnętrzny zawodowy (§ 11 Regulaminu).</dd>
+          <dt>Odstąpienie</dt>
+          <dd>14 dni od zawarcia umowy. Prawo wygasa z chwilą dostarczenia e-booka za Twoją wyraźną zgodą (§ 9 Regulaminu). Reklamacje: <a href="mailto:studio@claure.pl">studio@claure.pl</a>.</dd>
+          <dt>Sprzedawca</dt>
+          <dd>Fundacja AIP, al. Księcia Józefa Poniatowskiego 1, klatka K4, poziom 1, 03-901 Warszawa, KRS 0000199402, NIP 5242495143, REGON 015690013 — w ramach projektu „Clauré Studio” (Klaudia Stecz) w Programie Bizky.</dd>
+        </dl>
+
+        <div class="checks">
+          <label class="check">
+            <input type="checkbox" class="js-c1">
+            <span>Zapoznałam/-em się z <a href="/regulamin/">Regulaminem</a> sklepu (<a href="/regulamin/regulamin-claure-pl.pdf" download>pobierz PDF</a>) i akceptuję jego treść. Zasady przetwarzania danych opisuje <a href="/polityka-prywatnosci/">Polityka prywatności</a>.</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" class="js-c2">
+            <span>Żądam dostarczenia E-booka przed upływem 14 dni od zawarcia umowy, wyrażam uprzednią i wyraźną zgodę na rozpoczęcie dostarczania oraz przyjmuję do wiadomości, że z chwilą dostarczenia E-booka i spełnienia świadczenia utracę prawo odstąpienia od umowy.</span>
+          </label>
+          <p class="check-hint js-c2-hint">Zgoda jest dobrowolna. Bez niej e-book wyślemy dopiero po upływie 14-dniowego terminu na odstąpienie od umowy.</p>
+        </div>
+
+        <div class="order-actions">
+          <a class="btn js-order-btn" href="mailto:studio@claure.pl?subject=Zam%C3%B3wienie%3A%20e-book%20Creative%20AI%20Branding%20Course" aria-disabled="true">Zamawiam przez e-mail</a>
+          <p class="pay-note js-paynote"></p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -526,37 +592,96 @@
     <div class="foot-links">
       <a href="https://www.instagram.com/claure_studio" target="_blank" rel="noopener">Instagram</a>
       <a href="mailto:studio@claure.pl">studio@claure.pl</a>
+      <a href="/regulamin/">Regulamin</a>
+      <a href="/polityka-prywatnosci/">Polityka prywatności</a>
     </div>
     <span class="copy">© 2026 Studio Clauré — Klaudia Stecz</span>
+    <p class="foot-legal">Sprzedawcą e-booka jest Fundacja AIP, al. Księcia Józefa Poniatowskiego 1, klatka K4, poziom 1, 03-901 Warszawa, KRS 0000199402, NIP 5242495143, REGON 015690013 — w ramach projektu „Clauré Studio” prowadzonego przez Klaudię Stecz w Programie Bizky. Płatności online obsługuje operator wskazany w podsumowaniu zamówienia. Kontakt w sprawie zamówień, reklamacji i odstąpienia od umowy: <a href="mailto:studio@claure.pl">studio@claure.pl</a>.</p>
   </div>
 </footer>
 
 <script>
   /* ————————————————————————————————————————————————
      KONFIGURACJA SPRZEDAŻY — jedyne miejsce do edycji:
-     1. BIZKY_URL — wklej link do płatności (bramka przez Bizky).
-        Dopóki jest pusty, przycisk otwiera zamówienie mailowe.
-     2. PRICE — cena widoczna na stronie, np. "129 zł".
-        Pusta = cena ukryta.
+     1. BIZKY_URL — link do płatności (bramka przez Bizky). Pusty = zamówienia mailowo.
+     2. PAY_OPERATOR — nazwa operatora płatności widoczna w podsumowaniu,
+        np. "Przelewy24 (PayPro S.A.)", "Tpay (Krajowy Integrator Płatności S.A.)", "PayU S.A.".
+     3. PRICE — cena brutto widoczna na stronie, np. "129 zł". Pusta = ukryta.
+     4. PROMO — promocja premierowa z § 6 ust. 5 Regulaminu (opcjonalnie). Wypełnić wszystkie
+        cztery pola albo zostawić puste. "lowest" = najniższa cena z 30 dni przed obniżką
+        (przy premierze: cena regularna).
+     Adres powrotu po płatności (do podania operatorowi): https://claure.pl/dziekujemy/
      ———————————————————————————————————————————————— */
   const BIZKY_URL = "";
+  const PAY_OPERATOR = "";
   const PRICE = "";
+  const PROMO = { code: "", price: "", until: "", lowest: "" };
 
-  const buyButtons = document.querySelectorAll(".js-buy");
-  const priceEl = document.querySelector(".js-price");
-  const payNote = document.querySelector(".js-paynote");
+  const $ = sel => document.querySelector(sel);
+  const priceEl = $(".js-price"), priceInline = $(".js-price-inline"), payMethod = $(".js-pay-method");
+  const promoEl = $(".js-promo"), c1 = $(".js-c1"), c2 = $(".js-c2"), c2Hint = $(".js-c2-hint");
+  const btn = $(".js-order-btn"), payNote = $(".js-paynote");
 
-  if (BIZKY_URL) {
-    buyButtons.forEach(b => { b.href = BIZKY_URL; b.target = "_blank"; b.rel = "noopener"; });
-    payNote.textContent = "Bezpieczna płatność online";
+  if (PRICE) {
+    priceEl.innerHTML = PRICE.replace(/(zł|PLN)/i, "<small>$1</small>");
+    priceInline.textContent = PRICE + " brutto (cena zawiera podatki). Jedyna opłata — bez kosztów dostawy.";
   } else {
-    const mailto = "mailto:studio@claure.pl?subject=" + encodeURIComponent("Zamawiam e-booka Creative AI Branding Course");
-    buyButtons.forEach(b => { b.textContent = "Zamów przez e-mail"; b.href = mailto; });
-    payNote.textContent = "Płatność online już wkrótce · na razie zamówienia mailowo";
+    priceEl.hidden = true;
+    priceInline.textContent = "Cenę brutto podamy w potwierdzeniu warunków zamówienia, przed zawarciem umowy.";
   }
 
-  if (PRICE) priceEl.innerHTML = PRICE.replace(/(zł|PLN)/i, "<small>$1</small>");
-  else priceEl.style.display = "none";
+  if (PROMO.code && PROMO.price && PROMO.until && PROMO.lowest) {
+    promoEl.hidden = false;
+    promoEl.innerHTML = "Kod premierowy " + PROMO.code + " · −10% do " + PROMO.until + " · cena z kodem " + PROMO.price +
+      "<small>Najniższa cena z 30 dni przed obniżką: " + PROMO.lowest + ". Kod działa jednorazowo, nie łączy się z innymi rabatami.</small>";
+  }
+
+  payMethod.textContent = BIZKY_URL
+    ? "Płatność online przez operatora " + (PAY_OPERATOR || "wskazanego przed przekierowaniem") +
+      " — metody udostępnione przez operatora (np. BLIK, karta, szybki przelew). Po kliknięciu przycisku przejdziesz na stronę operatora."
+    : "Przelew bankowy na rachunek Fundacji AIP. Dane do przelewu i potwierdzenie warunków wyślemy e-mailem w odpowiedzi na zamówienie; umowa zostaje zawarta po Twojej akceptacji tych warunków.";
+
+  function mailOrder(early) {
+    const subject = "Zamówienie: e-book Creative AI Branding Course";
+    const body = [
+      "Dzień dobry,",
+      "",
+      "zamawiam e-book „Creative AI Branding Course” (plik PDF)" + (PRICE ? " w cenie " + PRICE : "") + ".",
+      "",
+      "Zapoznałam/-em się z Regulaminem sklepu claure.pl (https://claure.pl/regulamin/) i akceptuję jego treść.",
+      early
+        ? "Żądam dostarczenia E-booka przed upływem 14 dni od zawarcia umowy, wyrażam uprzednią i wyraźną zgodę na rozpoczęcie dostarczania oraz przyjmuję do wiadomości, że z chwilą dostarczenia E-booka i spełnienia świadczenia utracę prawo odstąpienia od umowy."
+        : "Nie żądam dostarczenia E-booka przed upływem 14 dni od zawarcia umowy.",
+      "",
+      "Proszę o potwierdzenie warunków zamówienia i przesłanie danych do płatności.",
+      "",
+      "Imię i nazwisko: ",
+      "Dane do faktury (jeśli potrzebna): "
+    ].join("\n");
+    return "mailto:studio@claure.pl?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+  }
+
+  function updateOrder() {
+    btn.setAttribute("aria-disabled", c1.checked ? "false" : "true");
+    c2Hint.hidden = c2.checked;
+    if (BIZKY_URL && c2.checked) {
+      btn.textContent = "Kupuję i płacę";
+      btn.href = BIZKY_URL; btn.target = "_blank"; btn.rel = "noopener";
+      payNote.textContent = "Zamówienie z obowiązkiem zapłaty · płatność online" + (PAY_OPERATOR ? " · " + PAY_OPERATOR : "");
+    } else {
+      btn.textContent = "Zamawiam przez e-mail";
+      btn.href = mailOrder(c2.checked); btn.removeAttribute("target"); btn.removeAttribute("rel");
+      payNote.textContent = BIZKY_URL
+        ? "Bez zgody na wcześniejsze dostarczenie zamówienie obsłużymy mailowo"
+        : "Płatność online już wkrótce · na razie zamówienia mailowo";
+    }
+  }
+  c1.addEventListener("change", updateOrder);
+  c2.addEventListener("change", updateOrder);
+  btn.addEventListener("click", e => {
+    if (btn.getAttribute("aria-disabled") === "true") { e.preventDefault(); c1.focus(); }
+  });
+  updateOrder();
 
   /* scroll reveal */
   const io = new IntersectionObserver(entries => {
