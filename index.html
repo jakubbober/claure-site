@@ -265,6 +265,7 @@
   .offer h2{font-size:clamp(20px,2.6vw,32px);margin-top:16px;line-height:1.35}
   .price{font-family:var(--display);font-size:clamp(34px,4.2vw,52px);letter-spacing:.06em;color:var(--gold-bright);margin-top:26px}
   .price small{font-size:.42em;letter-spacing:.1em;vertical-align:middle;color:var(--gold)}
+  .price-old{font-size:.4em;letter-spacing:.08em;vertical-align:middle;margin-left:16px;color:rgba(239,233,222,.45);text-decoration:line-through}
   .offer ul{list-style:none;margin:34px auto 0;max-width:420px;text-align:left}
   .offer li{
     font-size:12.5px;padding:12px 0 12px 30px;border-bottom:1px solid rgba(200,161,92,.14);
@@ -603,40 +604,62 @@
 <script>
   /* ————————————————————————————————————————————————
      KONFIGURACJA SPRZEDAŻY — jedyne miejsce do edycji:
-     1. BIZKY_URL — link do płatności (bramka przez Bizky). Pusty = zamówienia mailowo.
-     2. PAY_OPERATOR — nazwa operatora płatności widoczna w podsumowaniu,
+     1. PRICE — cena regularna brutto, np. "1200 zł".
+     2. BIZKY_URL — link do płatności na cenę regularną (bramka przez Bizky).
+        Pusty = zamówienia mailowo.
+     3. PAY_OPERATOR — nazwa operatora płatności widoczna w podsumowaniu,
         np. "Przelewy24 (PayPro S.A.)", "Tpay (Krajowy Integrator Płatności S.A.)", "PayU S.A.".
-     3. PRICE — cena brutto widoczna na stronie, np. "129 zł". Pusta = ukryta.
-     4. PROMO — promocja premierowa z § 6 ust. 5 Regulaminu (opcjonalnie). Wypełnić wszystkie
-        cztery pola albo zostawić puste. "lowest" = najniższa cena z 30 dni przed obniżką
-        (przy premierze: cena regularna).
+     4. PROMO — promocja premierowa −10% (§ 6 ust. 5 Regulaminu). Włącza się i wyłącza sama
+        według dat (from–until włącznie). "lowest" = najniższa cena z 30 dni przed obniżką
+        (omnibus) — przy premierze cena regularna; przy kolejnej promocji w ciągu 30 dni
+        po tej trzeba wpisać 1080 zł. "url" = osobny link płatności na kwotę promocyjną;
+        dopóki jest pusty, w czasie promocji zamówienia idą mailowo (kod w treści maila).
      Adres powrotu po płatności (do podania operatorowi): https://claure.pl/dziekujemy/
      ———————————————————————————————————————————————— */
+  const PRICE = "1200 zł";
   const BIZKY_URL = "";
   const PAY_OPERATOR = "";
-  const PRICE = "";
-  const PROMO = { code: "", price: "", until: "", lowest: "" };
+  const PROMO = {
+    code: "PREMIERA",
+    price: "1080 zł",
+    from: "2026-09-08",
+    until: "2026-09-14",
+    lowest: "1200 zł",
+    url: ""
+  };
 
   const $ = sel => document.querySelector(sel);
   const priceEl = $(".js-price"), priceInline = $(".js-price-inline"), payMethod = $(".js-pay-method");
   const promoEl = $(".js-promo"), c1 = $(".js-c1"), c2 = $(".js-c2"), c2Hint = $(".js-c2-hint");
   const btn = $(".js-order-btn"), payNote = $(".js-paynote");
 
+  const now = new Date();
+  const todayIso = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
+  const promoOn = !!(PRICE && PROMO.code && PROMO.price && PROMO.from && PROMO.until && PROMO.lowest)
+    && todayIso >= PROMO.from && todayIso <= PROMO.until;
+  const payUrl = promoOn ? PROMO.url : BIZKY_URL;
+  const currentPrice = promoOn ? PROMO.price : PRICE;
+  const fmtPrice = p => p.replace(/(zł|PLN)/i, "<small>$1</small>");
+  const fmtDate = d => d.split("-").reverse().join(".");
+
   if (PRICE) {
-    priceEl.innerHTML = PRICE.replace(/(zł|PLN)/i, "<small>$1</small>");
-    priceInline.textContent = PRICE + " brutto (cena zawiera podatki). Jedyna opłata — bez kosztów dostawy.";
+    priceEl.innerHTML = fmtPrice(currentPrice) + (promoOn ? ' <s class="price-old">' + PRICE + '</s>' : "");
+    priceInline.textContent = promoOn
+      ? PROMO.price + " brutto z kodem " + PROMO.code + " (cena regularna " + PRICE + "). Cena zawiera podatki, bez kosztów dostawy."
+      : PRICE + " brutto (cena zawiera podatki). Jedyna opłata — bez kosztów dostawy.";
   } else {
     priceEl.hidden = true;
     priceInline.textContent = "Cenę brutto podamy w potwierdzeniu warunków zamówienia, przed zawarciem umowy.";
   }
 
-  if (PROMO.code && PROMO.price && PROMO.until && PROMO.lowest) {
+  if (promoOn) {
     promoEl.hidden = false;
-    promoEl.innerHTML = "Kod premierowy " + PROMO.code + " · −10% do " + PROMO.until + " · cena z kodem " + PROMO.price +
-      "<small>Najniższa cena z 30 dni przed obniżką: " + PROMO.lowest + ". Kod działa jednorazowo, nie łączy się z innymi rabatami.</small>";
+    promoEl.innerHTML = "Promocja premierowa · kod " + PROMO.code + " · −10% od " + fmtDate(PROMO.from) + " do " + fmtDate(PROMO.until) +
+      "<small>Najniższa cena z 30 dni przed obniżką: " + PROMO.lowest + ". Kod działa jednorazowo na zamówienie i nie łączy się z innymi rabatami. " +
+      (payUrl ? "Kod jest stosowany automatycznie przy płatności." : "Kod jest wpisywany automatycznie w treści zamówienia.") + "</small>";
   }
 
-  payMethod.textContent = BIZKY_URL
+  payMethod.textContent = payUrl
     ? "Płatność online przez operatora " + (PAY_OPERATOR || "wskazanego przed przekierowaniem") +
       " — metody udostępnione przez operatora (np. BLIK, karta, szybki przelew). Po kliknięciu przycisku przejdziesz na stronę operatora."
     : "Przelew bankowy na rachunek Fundacji AIP. Dane do przelewu i potwierdzenie warunków wyślemy e-mailem w odpowiedzi na zamówienie; umowa zostaje zawarta po Twojej akceptacji tych warunków.";
@@ -646,7 +669,8 @@
     const body = [
       "Dzień dobry,",
       "",
-      "zamawiam e-book „Creative AI Branding Course” (plik PDF)" + (PRICE ? " w cenie " + PRICE : "") + ".",
+      "zamawiam e-book „Creative AI Branding Course” (plik PDF)" +
+        (PRICE ? " w cenie " + currentPrice + (promoOn ? " z kodem " + PROMO.code + " (cena regularna " + PRICE + ")" : "") : "") + ".",
       "",
       "Zapoznałam/-em się z Regulaminem sklepu claure.pl (https://claure.pl/regulamin/) i akceptuję jego treść.",
       early
@@ -664,14 +688,14 @@
   function updateOrder() {
     btn.setAttribute("aria-disabled", c1.checked ? "false" : "true");
     c2Hint.hidden = c2.checked;
-    if (BIZKY_URL && c2.checked) {
+    if (payUrl && c2.checked) {
       btn.textContent = "Kupuję i płacę";
-      btn.href = BIZKY_URL; btn.target = "_blank"; btn.rel = "noopener";
+      btn.href = payUrl; btn.target = "_blank"; btn.rel = "noopener";
       payNote.textContent = "Zamówienie z obowiązkiem zapłaty · płatność online" + (PAY_OPERATOR ? " · " + PAY_OPERATOR : "");
     } else {
       btn.textContent = "Zamawiam przez e-mail";
       btn.href = mailOrder(c2.checked); btn.removeAttribute("target"); btn.removeAttribute("rel");
-      payNote.textContent = BIZKY_URL
+      payNote.textContent = payUrl
         ? "Bez zgody na wcześniejsze dostarczenie zamówienie obsłużymy mailowo"
         : "Płatność online już wkrótce · na razie zamówienia mailowo";
     }
