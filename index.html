@@ -249,6 +249,34 @@
   .author p{margin-top:20px;font-size:13px;opacity:.8;max-width:54ch}
   .sig{font-family:var(--display);font-size:13px;letter-spacing:.3em;text-transform:uppercase;margin-top:30px;color:#8a6a38}
 
+  /* ————— bonus ————— */
+  .bonus{
+    background:
+      radial-gradient(760px 480px at 78% 20%, rgba(200,161,92,.12), transparent 62%),
+      linear-gradient(180deg,#241a14, var(--ink) 72%);
+    border-top:1px solid var(--line-dark);
+  }
+  .bonus .wrap{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(36px,6vw,90px);align-items:center}
+  .bonus-cover{position:relative;display:flex;justify-content:center;margin:0}
+  .bonus-cover::before{
+    content:"";position:absolute;width:82%;height:104%;top:-2%;left:2%;
+    border:1px solid var(--line-dark);transform:rotate(-3.5deg);
+  }
+  .bonus-cover img{
+    width:min(84%,330px);display:block;position:relative;transform:rotate(1.6deg);
+    box-shadow:0 34px 74px rgba(0,0,0,.6), 0 10px 24px rgba(0,0,0,.45);
+    pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;
+  }
+  .bonus h2{font-size:clamp(19px,2.5vw,32px);margin-top:18px;line-height:1.32;color:var(--paper)}
+  .bonus h2 + p{margin-top:22px;font-size:13.5px;color:rgba(239,233,222,.78);max-width:48ch}
+  .bonus ul{list-style:none;margin-top:30px;max-width:52ch}
+  .bonus li{
+    font-size:12.5px;padding:12px 0 12px 30px;border-bottom:1px solid rgba(200,161,92,.14);
+    position:relative;color:rgba(239,233,222,.85);
+  }
+  .bonus li::before{content:"✦";position:absolute;left:2px;color:var(--gold);font-size:11px}
+  .bonus-tag{display:inline-block;margin-top:28px;font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+
   /* ————— zakup ————— */
   .buy{
     background:
@@ -332,7 +360,8 @@
     .toc-item p{grid-column:2}
     .shots{grid-template-columns:repeat(2,1fr)}
     .who-grid{grid-template-columns:1fr}
-    .author .wrap,.ws .wrap,.promo .wrap{grid-template-columns:1fr}
+    .author .wrap,.ws .wrap,.promo .wrap,.bonus .wrap{grid-template-columns:1fr}
+    .bonus-cover{order:-1;margin-bottom:8px}
     .author-photo{max-width:360px}
     .promo-player{margin-top:20px}
   }
@@ -369,6 +398,7 @@
       <p class="lede rise d3">Praktyczny przewodnik po kreatywnej pracy z AI — od dobrego promptu, przez generowanie zdjęć i wideo, aż po świadome tworzenie własnych wizualizacji. Teoria, konkretne przykłady i moje wskazówki zebrane w jednym miejscu.</p>
       <div class="hero-meta rise d4">
         <span>PDF · po polsku</span>
+        <span>z bonusem</span>
       </div>
       <div class="cta-row rise d5">
         <a class="btn" href="#kup">Kup e-booka</a>
@@ -385,8 +415,8 @@
 <!-- ————— MARQUEE ————— -->
 <div class="marquee" aria-hidden="true">
   <div class="marquee-inner">
-    <span>Obrazy AI</span><span>Wideo AI</span><span>Dobre prompty</span><span>Praca z referencjami</span><span>Modele AI</span><span>Spójne wizualizacje</span><span>Praktyczne wskazówki</span>
-    <span>Obrazy AI</span><span>Wideo AI</span><span>Dobre prompty</span><span>Praca z referencjami</span><span>Modele AI</span><span>Spójne wizualizacje</span><span>Praktyczne wskazówki</span>
+    <span>Obrazy AI</span><span>Wideo AI</span><span>Dobre prompty</span><span>Praca z referencjami</span><span>Modele AI</span><span>Spójne wizualizacje</span><span>Prompty ratunkowe</span><span>Praktyczne wskazówki</span>
+    <span>Obrazy AI</span><span>Wideo AI</span><span>Dobre prompty</span><span>Praca z referencjami</span><span>Modele AI</span><span>Spójne wizualizacje</span><span>Prompty ratunkowe</span><span>Praktyczne wskazówki</span>
   </div>
 </div>
 
@@ -507,6 +537,26 @@
   </div>
 </section>
 
+<!-- ————— BONUS ————— -->
+<section class="bonus section">
+  <div class="wrap">
+    <figure class="bonus-cover">
+      <img src="assets/bonus.jpg" alt="Bonus — Zestaw ratunkowy dla nieudanych generacji AI" loading="lazy" draggable="false">
+    </figure>
+    <div>
+      <p class="eyebrow">Bonus w cenie</p>
+      <h2>Zestaw ratunkowy dla nieudanych generacji AI</h2>
+      <p>Czasem efekt jest prawie idealny, a jeden detal psuje całość — twarz przestaje przypominać osobę z referencji, produkt zmienia proporcje, logo wygląda inaczej. Nie musisz wtedy zaczynać od zera. Wklejasz gotowy prompt ratunkowy i poprawiasz tylko ten jeden element.</p>
+      <ul>
+        <li>20 gotowych promptów — 10 na problemy z obrazami, 10 z wideo</li>
+        <li>Każdy prompt po polsku i po angielsku, do skopiowania i wklejenia</li>
+        <li>Pola w [nawiasach] uzupełniasz swoim produktem albo zmianą</li>
+      </ul>
+      <span class="bonus-tag">PDF · 5 stron · dołączany do e-booka</span>
+    </div>
+  </div>
+</section>
+
 <!-- ————— ZAKUP ————— -->
 <section class="buy section" id="kup">
   <div class="wrap">
@@ -520,6 +570,7 @@
         <li>Praca z referencjami, modelami i ustawieniami AI</li>
         <li>Generowanie zdjęć i wideo krok po kroku</li>
         <li>Moje sprawdzone wskazówki z codziennej pracy z AI</li>
+        <li>Bonus w cenie: 20 promptów ratunkowych do obrazów i wideo</li>
       </ul>
       <p class="promo js-promo" hidden></p>
 
@@ -527,13 +578,13 @@
         <p class="order-title">Podsumowanie zamówienia</p>
         <dl class="summary">
           <dt>Produkt</dt>
-          <dd>E-book „Creative AI Branding Course” — plik PDF, 35 stron, po polsku, z warstwą tekstową (tekst można zaznaczać, wyszukiwać i powiększać).</dd>
+          <dd>E-book „Creative AI Branding Course” — plik PDF, 35 stron, po polsku, z warstwą tekstową (tekst można zaznaczać, wyszukiwać i powiększać). W tej samej cenie dodatek „Zestaw ratunkowy dla nieudanych generacji AI” — plik PDF, 5 stron, 20 gotowych promptów.</dd>
           <dt>Cena</dt>
           <dd class="js-price-inline"></dd>
           <dt>Płatność</dt>
           <dd class="js-pay-method"></dd>
           <dt>Dostawa</dt>
-          <dd>Plik PDF na Twój adres e-mail, bez kosztów wysyłki — bez zbędnej zwłoki po zaksięgowaniu płatności, zwykle w ciągu 24 godzin. Bez zgody z pola 2 poniżej: po upływie 14 dni od zawarcia umowy.</dd>
+          <dd>Oba pliki PDF na Twój adres e-mail, bez kosztów wysyłki — bez zbędnej zwłoki po zaksięgowaniu płatności, zwykle w ciągu 24 godzin. Bez zgody z pola 2 poniżej: po upływie 14 dni od zawarcia umowy.</dd>
           <dt>Wymagania</dt>
           <dd>Urządzenie z dostępem do internetu, aktywny adres e-mail i program do otwierania plików PDF.</dd>
           <dt>Umowa</dt>
@@ -609,11 +660,15 @@
         Pusty = zamówienia mailowo.
      3. PAY_OPERATOR — nazwa operatora płatności widoczna w podsumowaniu,
         np. "Przelewy24 (PayPro S.A.)", "Tpay (Krajowy Integrator Płatności S.A.)", "PayU S.A.".
-     4. PROMO — promocja premierowa −10% (§ 6 ust. 5 Regulaminu). Włącza się i wyłącza sama
-        według dat (from–until włącznie). "lowest" = najniższa cena z 30 dni przed obniżką
-        (omnibus) — przy premierze cena regularna; przy kolejnej promocji w ciągu 30 dni
-        po tej trzeba wpisać 1080 zł. "url" = osobny link płatności na kwotę promocyjną;
-        dopóki jest pusty, w czasie promocji zamówienia idą mailowo (kod w treści maila).
+     4. PROMO — promocja premierowa −10% (§ 6 ust. 5 Regulaminu), siedem dni od startu sprzedaży.
+        PROMO.start — JEDYNA data do wpisania ("RRRR-MM-DD", dzień startu sprzedaży).
+        Pusta = brak promocji, strona pokazuje cenę regularną. Koniec liczy się sam:
+        start + PROMO.days − 1, ostatni dzień włącznie.
+        PROMO.lowest — najniższa cena z 30 dni przed obniżką (omnibus). Cena 1080 zł była
+        publicznie wyświetlana 8–10.09.2026, więc dla promocji startującej przed 11.10.2026
+        zostaw "1080 zł"; dla późniejszej wpisz "1200 zł".
+        PROMO.url — osobny link płatności na kwotę promocyjną (bramka nie obsługuje kodów).
+        Pusty = w czasie promocji zamówienia idą mailowo, z kodem w treści wiadomości.
      Adres powrotu po płatności (do podania operatorowi): https://claure.pl/dziekujemy/
      ———————————————————————————————————————————————— */
   const PRICE = "1200 zł";
@@ -622,9 +677,9 @@
   const PROMO = {
     code: "PREMIERA",
     price: "1080 zł",
-    from: "2026-09-08",
-    until: "2026-09-14",
-    lowest: "1200 zł",
+    start: "",
+    days: 7,
+    lowest: "1080 zł",
     url: ""
   };
 
@@ -633,14 +688,22 @@
   const promoEl = $(".js-promo"), c1 = $(".js-c1"), c2 = $(".js-c2"), c2Hint = $(".js-c2-hint");
   const btn = $(".js-order-btn"), payNote = $(".js-paynote");
 
-  const now = new Date();
-  const todayIso = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
-  const promoOn = !!(PRICE && PROMO.code && PROMO.price && PROMO.from && PROMO.until && PROMO.lowest)
-    && todayIso >= PROMO.from && todayIso <= PROMO.until;
+  const iso = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  const addDays = (isoDate, n) => {
+    const [y, m, d] = isoDate.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
+    dt.setDate(dt.getDate() + n);
+    return iso(dt);
+  };
+  const fmtDate = d => d.split("-").reverse().join(".");
+
+  const promoEnd = PROMO.start ? addDays(PROMO.start, Math.max(1, PROMO.days) - 1) : "";
+  const today = iso(new Date());
+  const promoOn = !!(PRICE && PROMO.code && PROMO.price && PROMO.start && PROMO.lowest)
+    && today >= PROMO.start && today <= promoEnd;
   const payUrl = promoOn ? PROMO.url : BIZKY_URL;
   const currentPrice = promoOn ? PROMO.price : PRICE;
   const fmtPrice = p => p.replace(/(zł|PLN)/i, "<small>$1</small>");
-  const fmtDate = d => d.split("-").reverse().join(".");
 
   if (PRICE) {
     priceEl.innerHTML = fmtPrice(currentPrice) + (promoOn ? ' <s class="price-old">' + PRICE + '</s>' : "");
@@ -654,7 +717,7 @@
 
   if (promoOn) {
     promoEl.hidden = false;
-    promoEl.innerHTML = "Promocja premierowa · kod " + PROMO.code + " · −10% od " + fmtDate(PROMO.from) + " do " + fmtDate(PROMO.until) +
+    promoEl.innerHTML = "Promocja premierowa · kod " + PROMO.code + " · −10% od " + fmtDate(PROMO.start) + " do " + fmtDate(promoEnd) +
       "<small>Najniższa cena z 30 dni przed obniżką: " + PROMO.lowest + ". Kod działa jednorazowo na zamówienie i nie łączy się z innymi rabatami. " +
       (payUrl ? "Kod jest stosowany automatycznie przy płatności." : "Kod jest wpisywany automatycznie w treści zamówienia.") + "</small>";
   }
@@ -669,7 +732,7 @@
     const body = [
       "Dzień dobry,",
       "",
-      "zamawiam e-book „Creative AI Branding Course” (plik PDF)" +
+      "zamawiam e-book „Creative AI Branding Course” wraz z bonusem „Zestaw ratunkowy dla nieudanych generacji AI” (pliki PDF)" +
         (PRICE ? " w cenie " + currentPrice + (promoOn ? " z kodem " + PROMO.code + " (cena regularna " + PRICE + ")" : "") : "") + ".",
       "",
       "Zapoznałam/-em się z Regulaminem sklepu claure.pl (https://claure.pl/regulamin/) i akceptuję jego treść.",
