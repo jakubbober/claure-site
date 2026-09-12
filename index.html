@@ -77,10 +77,18 @@
 
   /* ————— nagłówek ————— */
   header{
-    position:absolute;top:0;left:0;right:0;z-index:20;
+    position:fixed;top:0;left:0;right:0;z-index:20;
     display:flex;justify-content:space-between;align-items:center;
     padding:26px clamp(20px,4vw,56px);
+    border-bottom:1px solid transparent;
+    transition:background .35s ease,border-color .35s ease,backdrop-filter .35s ease;
   }
+  header.scrolled{
+    background:rgba(26,18,13,.92);border-bottom-color:var(--line-dark);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  }
+  /* kotwice lądują pod przyklejonym nagłówkiem */
+  section[id]{scroll-margin-top:96px}
   .brand{font-family:var(--display);font-size:13px;letter-spacing:.34em;text-transform:uppercase;color:var(--paper);text-decoration:none}
   .brand b{color:var(--gold);font-weight:400}
   .top-cta{
@@ -89,6 +97,75 @@
     padding:11px 22px;transition:.35s;
   }
   .top-cta:hover{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+  body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+  /* przy otwartym menu nagłówek dostaje tło — treść menu przewija się pod nim */
+  body.menu-open header{
+    z-index:70;background:rgba(26,18,13,.92);border-bottom-color:var(--line-dark);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  }
+
+  /* ————— nawigacja ————— */
+  .nav{display:flex;align-items:center;gap:clamp(13px,1.9vw,28px);margin:0 clamp(16px,2.4vw,34px) 0 auto}
+  .nav a{
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap;
+    color:rgba(239,233,222,.72);text-decoration:none;padding-bottom:5px;border-bottom:1px solid transparent;transition:.3s;
+  }
+  .nav a:hover,.nav a:focus-visible{color:var(--gold);border-color:var(--gold)}
+
+  .nav-toggle{
+    display:none;width:44px;height:44px;margin-left:auto;flex:0 0 auto;position:relative;
+    background:transparent;border:1px solid var(--line-dark);color:var(--gold);cursor:pointer;transition:.3s;
+  }
+  .nav-toggle:hover{border-color:var(--gold)}
+  .nav-toggle i{
+    position:absolute;left:12px;right:12px;height:1px;background:currentColor;
+    transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .2s;
+  }
+  .nav-toggle i:nth-child(1){top:15px}
+  .nav-toggle i:nth-child(2){top:21px}
+  .nav-toggle i:nth-child(3){top:27px}
+  .nav-toggle[aria-expanded="true"] i:nth-child(1){transform:translateY(6px) rotate(45deg)}
+  .nav-toggle[aria-expanded="true"] i:nth-child(2){opacity:0}
+  .nav-toggle[aria-expanded="true"] i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+  .menu{
+    position:fixed;inset:0;z-index:60;overflow-y:auto;overscroll-behavior:contain;
+    background:
+      radial-gradient(700px 500px at 82% 8%, rgba(200,161,92,.14), transparent 62%),
+      linear-gradient(170deg,#241a14 0%, var(--ink) 60%, #170f0b 100%);
+    padding:104px clamp(22px,6vw,56px) 44px;
+    opacity:0;visibility:hidden;transform:translateY(-12px);
+    transition:opacity .35s ease,transform .45s cubic-bezier(.2,.8,.2,1),visibility 0s linear .45s;
+  }
+  .menu[data-open="true"]{
+    opacity:1;visibility:visible;transform:none;
+    transition:opacity .35s ease,transform .45s cubic-bezier(.2,.8,.2,1),visibility 0s;
+  }
+  .menu-links,.menu .btn,.menu-foot{max-width:560px}
+  .menu-links{border-top:1px solid var(--line-dark)}
+  .menu-links a{
+    display:flex;align-items:baseline;gap:16px;padding:15px 2px;border-bottom:1px solid var(--line-dark);
+    font-family:var(--display);font-size:clamp(15px,4.4vw,20px);line-height:1.3;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--paper);text-decoration:none;transition:color .3s;
+  }
+  .menu-links a i{
+    font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+    color:var(--gold);opacity:.85;flex:0 0 26px;
+  }
+  .menu-links a:hover,.menu-links a:focus-visible{color:var(--gold-bright)}
+  .menu .btn{display:block;margin-top:32px;text-align:center;padding:19px 24px}
+  .menu-foot{
+    margin-top:26px;display:flex;flex-wrap:wrap;gap:12px 28px;
+    font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;
+  }
+  .menu-foot a{color:rgba(239,233,222,.5);text-decoration:none;transition:color .3s}
+  .menu-foot a:hover{color:var(--gold)}
+
+  @media(max-width:960px){
+    .nav{display:none}
+    html.js .top-cta{display:none}
+    html.js .nav-toggle{display:block}
+  }
 
   /* ————— hero ————— */
   .hero{
@@ -130,7 +207,7 @@
     border:1px solid var(--line-dark);transform:rotate(4deg);
   }
   .cover-box img{
-    width:min(78%,400px);display:block;transform:rotate(-2.5deg);
+    width:min(78%,400px);height:auto;display:block;transform:rotate(-2.5deg);
     box-shadow:0 40px 90px rgba(0,0,0,.6), 0 12px 28px rgba(0,0,0,.5);
     transition:transform .6s cubic-bezier(.2,.8,.2,1);
   }
@@ -193,7 +270,7 @@
   .shot-frame{position:relative;overflow:hidden;padding:8px 0}
   /* blokada zaznaczania, przeciągania i menu „zapisz obraz” */
   .shot img{
-    width:100%;display:block;box-shadow:0 22px 50px rgba(30,20,12,.3);
+    width:100%;height:auto;display:block;box-shadow:0 22px 50px rgba(30,20,12,.3);
     transition:transform .5s cubic-bezier(.2,.8,.2,1);
     pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;
   }
@@ -210,6 +287,7 @@
       linear-gradient(180deg,#1f1611, var(--ink) 70%);
     border-top:1px solid var(--line-dark);border-bottom:1px solid var(--line-dark);
   }
+  .marquee + .promo{border-top:none}
   .promo .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(36px,6vw,100px);align-items:center}
   .promo h2{font-size:clamp(20px,2.7vw,36px);margin-top:18px;line-height:1.3;color:var(--paper)}
   .promo h2 + p{margin-top:22px;font-size:13.5px;color:rgba(239,233,222,.78);max-width:46ch}
@@ -263,7 +341,7 @@
     border:1px solid var(--line-dark);transform:rotate(-3.5deg);
   }
   .bonus-cover img{
-    width:min(84%,330px);display:block;position:relative;transform:rotate(1.6deg);
+    width:min(84%,330px);height:auto;display:block;position:relative;transform:rotate(1.6deg);
     box-shadow:0 34px 74px rgba(0,0,0,.6), 0 10px 24px rgba(0,0,0,.45);
     pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;
   }
@@ -310,8 +388,8 @@
   .summary dt{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);padding-top:2px}
   .summary dd{margin:0}
   .summary a{color:rgba(239,233,222,.9)}
-  .promo{margin-top:16px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
-  .promo small{display:block;margin-top:6px;font-size:10px;letter-spacing:.08em;text-transform:none;color:rgba(239,233,222,.5)}
+  .order-promo{margin-top:16px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+  .order-promo small{display:block;margin-top:6px;font-size:10px;letter-spacing:.08em;text-transform:none;color:rgba(239,233,222,.5)}
   .checks{margin-top:30px;border-top:1px solid rgba(200,161,92,.14);padding-top:10px}
   .check{display:flex;gap:14px;align-items:flex-start;margin-top:18px;font-size:11.5px;line-height:1.65;color:rgba(239,233,222,.86);cursor:pointer}
   .check input{
@@ -369,6 +447,7 @@
     .shots{grid-template-columns:1fr 1fr;gap:14px}
     .hero h1{font-size:clamp(24px,7vw,34px)}
     header{padding:20px}
+    section[id]{scroll-margin-top:84px}
     .top-cta{display:none}
     .summary{grid-template-columns:1fr;gap:2px 0}
     .summary dt{margin-top:12px}
@@ -376,6 +455,7 @@
   }
   @media(prefers-reduced-motion:reduce){
     .rise,.toc-item,.shot,.who-card{animation:none;opacity:1;transform:none;transition:none}
+    .menu,.menu[data-open="true"],.nav-toggle i{transition:none}
     .marquee-inner{animation:none}
   }
 </style>
@@ -385,8 +465,38 @@
 
 <header>
   <a class="brand" href="#">Studio <b>Clauré</b></a>
+  <nav class="nav" aria-label="Sekcje strony">
+    <a href="#srodek">Program</a>
+    <a href="#wideo">Wideo</a>
+    <a href="#dla-kogo">Dla kogo</a>
+    <a href="#autorka">Autorka</a>
+    <a href="#bonus">Bonus</a>
+    <a href="#warsztaty">Warsztaty</a>
+  </nav>
   <a class="top-cta" href="#kup">Kup e-booka</a>
+  <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu">
+    <i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i>
+  </button>
 </header>
+
+<!-- ————— MENU MOBILNE ————— -->
+<nav class="menu" id="menu" data-open="false" aria-label="Menu">
+  <div class="menu-links">
+    <a href="#srodek"><i>01</i>Program e-booka</a>
+    <a href="#wideo"><i>02</i>Wideo</a>
+    <a href="#galeria"><i>03</i>Zajrzyj do środka</a>
+    <a href="#dla-kogo"><i>04</i>Dla kogo</a>
+    <a href="#autorka"><i>05</i>Autorka</a>
+    <a href="#bonus"><i>06</i>Bonus</a>
+    <a href="#warsztaty"><i>07</i>Warsztaty</a>
+  </div>
+  <a class="btn" href="#kup">Kup e-booka</a>
+  <div class="menu-foot">
+    <a href="https://www.instagram.com/claure_studio" target="_blank" rel="noopener">Instagram</a>
+    <a href="mailto:studio@claure.pl">studio@claure.pl</a>
+    <a href="/regulamin/">Regulamin</a>
+  </div>
+</nav>
 
 <!-- ————— HERO ————— -->
 <section class="hero">
@@ -406,7 +516,7 @@
       </div>
     </div>
     <div class="cover-box rise d3">
-      <img src="assets/cover.jpg" alt="Okładka e-booka Creative AI Branding Course — Studio Clauré" fetchpriority="high">
+      <img src="assets/cover.jpg" width="989" height="1400" alt="Okładka e-booka Creative AI Branding Course — Studio Clauré" fetchpriority="high">
       <div class="cover-tag">E-book · Edycja I</div>
     </div>
   </div>
@@ -419,6 +529,21 @@
     <span>Obrazy AI</span><span>Wideo AI</span><span>Dobre prompty</span><span>Praca z referencjami</span><span>Modele AI</span><span>Spójne wizualizacje</span><span>Prompty ratunkowe</span><span>Praktyczne wskazówki</span>
   </div>
 </div>
+
+<!-- ————— WIDEO ————— -->
+<section class="promo section" id="wideo">
+  <div class="wrap">
+    <div class="promo-text">
+      <p class="eyebrow">Wideo</p>
+      <h2>Poznaj możliwości Creative AI Branding Course</h2>
+      <p>Zobacz, jak wygląda e-book i co możesz stworzyć z jego pomocą.</p>
+      <span class="promo-hint">✦ Włącz dźwięk</span>
+    </div>
+    <div class="promo-player">
+      <video src="assets/promo.mp4" poster="assets/promo-poster.jpg" autoplay muted loop playsinline controls preload="metadata" aria-label="Wideo promujące e-book Creative AI Branding Course"></video>
+    </div>
+  </div>
+</section>
 
 <!-- ————— PROGRAM E-BOOKA ————— -->
 <section class="paper section" id="srodek">
@@ -464,7 +589,7 @@
 </section>
 
 <!-- ————— GALERIA ————— -->
-<section class="gallery-sec section">
+<section class="gallery-sec section" id="galeria">
   <div class="wrap">
     <div class="sec-head">
       <p class="eyebrow">Zajrzyj do środka</p>
@@ -472,31 +597,16 @@
       <p>Bez nudnych ścian tekstu, za to z formą, która sprawia, że materiał jest lekki, czytelny i przyjemny w odbiorze.</p>
     </div>
     <div class="shots">
-      <figure class="shot"><div class="shot-frame"><img src="assets/p04.jpg" alt="Strona e-booka: wybieraj, łącz, twórz" loading="lazy" draggable="false"></div><figcaption>Wybieraj. Łącz. Twórz.</figcaption></figure>
-      <figure class="shot"><div class="shot-frame"><img src="assets/p11.jpg" alt="Strona e-booka: porównanie efektów promptów" loading="lazy" draggable="false"></div><figcaption>Porównanie efektów</figcaption></figure>
-      <figure class="shot"><div class="shot-frame"><img src="assets/p14.jpg" alt="Strona e-booka: kadr" loading="lazy" draggable="false"></div><figcaption>Kadr</figcaption></figure>
-      <figure class="shot"><div class="shot-frame"><img src="assets/p33.jpg" alt="Strona e-booka: kilka wskazówek na koniec" loading="lazy" draggable="false"></div><figcaption>Wskazówki na koniec</figcaption></figure>
-    </div>
-  </div>
-</section>
-
-<!-- ————— WIDEO ————— -->
-<section class="promo section">
-  <div class="wrap">
-    <div class="promo-text">
-      <p class="eyebrow">Wideo</p>
-      <h2>Poznaj możliwości Creative AI Branding Course</h2>
-      <p>Zobacz, jak wygląda e-book i co możesz stworzyć z jego pomocą.</p>
-      <span class="promo-hint">✦ Włącz dźwięk</span>
-    </div>
-    <div class="promo-player">
-      <video src="assets/promo.mp4" poster="assets/promo-poster.jpg" autoplay muted loop playsinline controls preload="metadata" aria-label="Wideo promujące e-book Creative AI Branding Course"></video>
+      <figure class="shot"><div class="shot-frame"><img src="assets/p04.jpg" width="778" height="1100" alt="Strona e-booka: wybieraj, łącz, twórz" loading="lazy" draggable="false"></div><figcaption>Wybieraj. Łącz. Twórz.</figcaption></figure>
+      <figure class="shot"><div class="shot-frame"><img src="assets/p11.jpg" width="778" height="1100" alt="Strona e-booka: porównanie efektów promptów" loading="lazy" draggable="false"></div><figcaption>Porównanie efektów</figcaption></figure>
+      <figure class="shot"><div class="shot-frame"><img src="assets/p14.jpg" width="778" height="1100" alt="Strona e-booka: kadr" loading="lazy" draggable="false"></div><figcaption>Kadr</figcaption></figure>
+      <figure class="shot"><div class="shot-frame"><img src="assets/p33.jpg" width="778" height="1100" alt="Strona e-booka: kilka wskazówek na koniec" loading="lazy" draggable="false"></div><figcaption>Wskazówki na koniec</figcaption></figure>
     </div>
   </div>
 </section>
 
 <!-- ————— DLA KOGO ————— -->
-<section class="who section">
+<section class="who section" id="dla-kogo">
   <div class="wrap">
     <div class="sec-head">
       <p class="eyebrow">Dla kogo</p>
@@ -521,10 +631,10 @@
 </section>
 
 <!-- ————— AUTORKA ————— -->
-<section class="paper section author">
+<section class="paper section author" id="autorka">
   <div class="wrap">
     <figure class="author-photo">
-      <img src="assets/klaudia.jpg" alt="Klaudia Stecz — Studio Clauré" loading="lazy">
+      <img src="assets/klaudia.jpg" width="800" height="1400" alt="Klaudia Stecz — Studio Clauré" loading="lazy">
       <figcaption>Studio Clauré · Mława</figcaption>
     </figure>
     <div>
@@ -538,10 +648,10 @@
 </section>
 
 <!-- ————— BONUS ————— -->
-<section class="bonus section">
+<section class="bonus section" id="bonus">
   <div class="wrap">
     <figure class="bonus-cover">
-      <img src="assets/bonus.jpg" alt="Bonus — Zestaw ratunkowy dla nieudanych generacji AI" loading="lazy" draggable="false">
+      <img src="assets/bonus.jpg" width="636" height="900" alt="Bonus — Zestaw ratunkowy dla nieudanych generacji AI" loading="lazy" draggable="false">
     </figure>
     <div>
       <p class="eyebrow">Bonus w cenie</p>
@@ -572,7 +682,7 @@
         <li>Moje sprawdzone wskazówki z codziennej pracy z AI</li>
         <li>Bonus w cenie: 20 promptów ratunkowych do obrazów i wideo</li>
       </ul>
-      <p class="promo js-promo" hidden></p>
+      <p class="order-promo js-promo" hidden></p>
 
       <div class="order" id="zamowienie">
         <p class="order-title">Podsumowanie zamówienia</p>
@@ -617,7 +727,7 @@
 </section>
 
 <!-- ————— WARSZTATY ————— -->
-<section class="ws section">
+<section class="ws section" id="warsztaty">
   <div class="wrap">
     <div>
       <p class="eyebrow">Krok dalej</p>
@@ -769,6 +879,40 @@
     if (btn.getAttribute("aria-disabled") === "true") { e.preventDefault(); c1.focus(); }
   });
   updateOrder();
+
+  /* ————— menu mobilne ————— */
+  const toggle = $(".nav-toggle"), menu = $("#menu"), root = document.documentElement;
+  let lockedY = 0;
+  function setMenu(open) {
+    menu.dataset.open = open ? "true" : "false";
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.setAttribute("aria-label", open ? "Zamknij menu" : "Menu");
+    if (open) {
+      /* blokada tła bez utraty pozycji: body na fixed, przesunięte o scrollY */
+      lockedY = window.scrollY;
+      document.body.style.top = -lockedY + "px";
+      document.body.classList.add("menu-open");
+      requestAnimationFrame(() => menu.querySelector("a").focus());
+    } else if (document.body.classList.contains("menu-open")) {
+      document.body.classList.remove("menu-open");
+      document.body.style.top = "";
+      void document.body.offsetHeight;      /* przeliczenie wysokości przed powrotem */
+      const behavior = root.style.scrollBehavior;
+      root.style.scrollBehavior = "auto";   /* powrót bez animacji */
+      window.scrollTo(0, lockedY);
+      root.style.scrollBehavior = behavior;
+    }
+  }
+  toggle.addEventListener("click", () => setMenu(menu.dataset.open !== "true"));
+  const header = document.querySelector("header");
+  const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 40);
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+  menu.addEventListener("click", e => { if (e.target.closest("a")) setMenu(false); });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && menu.dataset.open === "true") { setMenu(false); toggle.focus(); }
+  });
+  matchMedia("(min-width:961px)").addEventListener("change", e => { if (e.matches) setMenu(false); });
 
   /* scroll reveal */
   const io = new IntersectionObserver(entries => {
