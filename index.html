@@ -765,11 +765,11 @@
 <script>
   /* ————————————————————————————————————————————————
      KONFIGURACJA SPRZEDAŻY — jedyne miejsce do edycji:
-     1. PRICE — cena regularna brutto, np. "1200 zł".
-     2. BIZKY_URL — link do płatności na cenę regularną (bramka przez Bizky).
-        Pusty = zamówienia mailowo.
-     3. PAY_OPERATOR — nazwa operatora płatności widoczna w podsumowaniu,
-        np. "Przelewy24 (PayPro S.A.)", "Tpay (Krajowy Integrator Płatności S.A.)", "PayU S.A.".
+     1. PRICE — cena regularna brutto, np. "1200 zł". Musi się zgadzać z ceną produktu w Stripe.
+     2. PAYMENT_URL — link do płatności Stripe (Payment Link, https://buy.stripe.com/...).
+        Pusty = zamówienia mailowo. Strona sama dopisuje do linku locale=pl.
+     3. PAY_OPERATOR — operator płatności widoczny w podsumowaniu zamówienia (wymóg Działu
+        Prawnego Bizky). W notce pod przyciskiem pokazuje się tylko część przed nawiasem.
      4. PROMO — promocja premierowa −10% (§ 6 ust. 5 Regulaminu), siedem dni od startu sprzedaży.
         PROMO.start — JEDYNA data do wpisania ("RRRR-MM-DD", dzień startu sprzedaży).
         Pusta = brak promocji, strona pokazuje cenę regularną. Koniec liczy się sam:
@@ -777,13 +777,14 @@
         PROMO.lowest — najniższa cena z 30 dni przed obniżką (omnibus). Cena 1080 zł była
         publicznie wyświetlana 8–10.09.2026, więc dla promocji startującej przed 11.10.2026
         zostaw "1080 zł"; dla późniejszej wpisz "1200 zł".
-        PROMO.url — osobny link płatności na kwotę promocyjną (bramka nie obsługuje kodów).
-        Pusty = w czasie promocji zamówienia idą mailowo, z kodem w treści wiadomości.
+        PROMO.url — zwykle zostaje pusty: w czasie promocji strona używa PAYMENT_URL
+        z parametrem prefilled_promo_code=PREMIERA, a Stripe sam nalicza rabat. Warunek:
+        w linku Stripe włączone kody promocyjne, a w Stripe istnieje aktywny kod PREMIERA.
      Adres powrotu po płatności (do podania operatorowi): https://claure.pl/dziekujemy/
      ———————————————————————————————————————————————— */
   const PRICE = "1200 zł";
-  const BIZKY_URL = "";
-  const PAY_OPERATOR = "";
+  const PAYMENT_URL = "";
+  const PAY_OPERATOR = "Stripe (Stripe Payments Europe, Ltd.)";
   const PROMO = {
     code: "PREMIERA",
     price: "1080 zł",
@@ -811,7 +812,16 @@
   const today = iso(new Date());
   const promoOn = !!(PRICE && PROMO.code && PROMO.price && PROMO.start && PROMO.lowest)
     && today >= PROMO.start && today <= promoEnd;
-  const payUrl = promoOn ? PROMO.url : BIZKY_URL;
+  const withParams = (url, params) => {
+    if (!url) return "";
+    const u = new URL(url);
+    Object.entries(params).forEach(([k, v]) => { if (v && !u.searchParams.has(k)) u.searchParams.set(k, v); });
+    return u.toString();
+  };
+  const payUrl = promoOn
+    ? withParams(PROMO.url || PAYMENT_URL, { prefilled_promo_code: PROMO.url ? "" : PROMO.code, locale: "pl" })
+    : withParams(PAYMENT_URL, { locale: "pl" });
+  const operatorShort = PAY_OPERATOR.split(" (")[0];
   const currentPrice = promoOn ? PROMO.price : PRICE;
   const fmtPrice = p => p.replace(/(zł|PLN)/i, "<small>$1</small>");
 
@@ -834,7 +844,7 @@
 
   payMethod.textContent = payUrl
     ? "Płatność online przez operatora " + (PAY_OPERATOR || "wskazanego przed przekierowaniem") +
-      " — metody udostępnione przez operatora (np. BLIK, karta, szybki przelew). Po kliknięciu przycisku przejdziesz na stronę operatora."
+      " — BLIK, karta płatnicza, Przelewy24, Apple Pay lub Google Pay, zależnie od dostępności u operatora. Po kliknięciu przycisku przejdziesz na stronę płatności operatora."
     : "Przelew bankowy na rachunek Fundacji AIP. Dane do przelewu i potwierdzenie warunków wyślemy e-mailem w odpowiedzi na zamówienie; umowa zostaje zawarta po Twojej akceptacji tych warunków.";
 
   function mailOrder(early) {
@@ -864,7 +874,7 @@
     if (payUrl && c2.checked) {
       btn.textContent = "Kupuję i płacę";
       btn.href = payUrl; btn.target = "_blank"; btn.rel = "noopener";
-      payNote.textContent = "Zamówienie z obowiązkiem zapłaty · płatność online" + (PAY_OPERATOR ? " · " + PAY_OPERATOR : "");
+      payNote.textContent = "Zamówienie z obowiązkiem zapłaty · płatność online" + (operatorShort ? " · " + operatorShort : "");
     } else {
       btn.textContent = "Zamawiam przez e-mail";
       btn.href = mailOrder(c2.checked); btn.removeAttribute("target"); btn.removeAttribute("rel");
