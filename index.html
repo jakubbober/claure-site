@@ -770,7 +770,8 @@
         Pusty = przycisk zakupu nieaktywny. Strona sama dopisuje do linku locale=pl.
      3. PAY_OPERATOR — operator płatności widoczny w podsumowaniu zamówienia (wymóg Działu
         Prawnego Bizky). W notce pod przyciskiem pokazuje się tylko część przed nawiasem.
-     4. PROMO — promocja premierowa −10% (§ 6 ust. 5 Regulaminu), siedem dni od startu sprzedaży.
+     4. PROMO — promocja premierowa −10% (§ 6 ust. 5 Regulaminu), od startu sprzedaży przez PROMO.days dni
+        (8 dni, 11–18.10.2026 — decyzja z 6.10.2026, zgodnie z datą wygaśnięcia kodu w Stripe).
         PROMO.start — JEDYNA data do wpisania ("RRRR-MM-DD", dzień startu sprzedaży).
         Pusta = brak promocji, strona pokazuje cenę regularną. Koniec liczy się sam:
         start + PROMO.days − 1, ostatni dzień włącznie.
@@ -789,7 +790,7 @@
     code: "PREMIERA",
     price: "1080 zł",
     start: "2026-10-11",
-    days: 7,
+    days: 8,
     lowest: "1200 zł",
     url: ""
   };
