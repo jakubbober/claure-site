@@ -694,7 +694,7 @@
           <dt>Płatność</dt>
           <dd class="js-pay-method"></dd>
           <dt>Dostawa</dt>
-          <dd>Oba pliki PDF na Twój adres e-mail, bez kosztów wysyłki — bez zbędnej zwłoki po zaksięgowaniu płatności, zwykle w ciągu 24 godzin. Bez zgody z pola 2 poniżej: po upływie 14 dni od zawarcia umowy.</dd>
+          <dd>Oba pliki PDF na Twój adres e-mail, bez kosztów wysyłki — bez zbędnej zwłoki po zaksięgowaniu płatności, zwykle w ciągu 24 godzin.</dd>
           <dt>Wymagania</dt>
           <dd>Urządzenie z dostępem do internetu, aktywny adres e-mail i program do otwierania plików PDF.</dd>
           <dt>Umowa</dt>
@@ -714,11 +714,11 @@
             <input type="checkbox" class="js-c2">
             <span>Żądam dostarczenia E-booka przed upływem 14 dni od zawarcia umowy, wyrażam uprzednią i wyraźną zgodę na rozpoczęcie dostarczania oraz przyjmuję do wiadomości, że z chwilą dostarczenia E-booka i spełnienia świadczenia utracę prawo odstąpienia od umowy.</span>
           </label>
-          <p class="check-hint js-c2-hint">Zgoda jest dobrowolna. Bez niej e-book wyślemy dopiero po upływie 14-dniowego terminu na odstąpienie od umowy.</p>
+          <p class="check-hint js-c2-hint">Oba pola są wymagane do zakupu, bo e-book wysyłamy zaraz po płatności.</p>
         </div>
 
         <div class="order-actions">
-          <a class="btn js-order-btn" href="mailto:studio@claure.pl?subject=Zam%C3%B3wienie%3A%20e-book%20Creative%20AI%20Branding%20Course" aria-disabled="true">Zamawiam przez e-mail</a>
+          <a class="btn js-order-btn" href="#zamowienie" aria-disabled="true">Kupuję i płacę</a>
           <p class="pay-note js-paynote"></p>
         </div>
       </div>
@@ -767,7 +767,7 @@
      KONFIGURACJA SPRZEDAŻY — jedyne miejsce do edycji:
      1. PRICE — cena regularna brutto, np. "1200 zł". Musi się zgadzać z ceną produktu w Stripe.
      2. PAYMENT_URL — link do płatności Stripe (Payment Link, https://buy.stripe.com/...).
-        Pusty = zamówienia mailowo. Strona sama dopisuje do linku locale=pl.
+        Pusty = przycisk zakupu nieaktywny. Strona sama dopisuje do linku locale=pl.
      3. PAY_OPERATOR — operator płatności widoczny w podsumowaniu zamówienia (wymóg Działu
         Prawnego Bizky). W notce pod przyciskiem pokazuje się tylko część przed nawiasem.
      4. PROMO — promocja premierowa −10% (§ 6 ust. 5 Regulaminu), siedem dni od startu sprzedaży.
@@ -839,54 +839,33 @@
     promoEl.hidden = false;
     promoEl.innerHTML = "Promocja premierowa · kod " + PROMO.code + " · −10% od " + fmtDate(PROMO.start) + " do " + fmtDate(promoEnd) +
       "<small>Najniższa cena z 30 dni przed obniżką: " + PROMO.lowest + ". Kod działa jednorazowo na zamówienie i nie łączy się z innymi rabatami. " +
-      (payUrl ? "Kod jest stosowany automatycznie przy płatności." : "Kod jest wpisywany automatycznie w treści zamówienia.") + "</small>";
+      "Kod jest stosowany automatycznie przy płatności." + "</small>";
   }
 
-  payMethod.textContent = payUrl
-    ? "Płatność online przez operatora " + (PAY_OPERATOR || "wskazanego przed przekierowaniem") +
-      " — BLIK, karta płatnicza, Apple Pay lub Google Pay, zależnie od dostępności u operatora. Po kliknięciu przycisku przejdziesz na stronę płatności operatora."
-    : "Przelew bankowy na rachunek Fundacji AIP. Dane do przelewu i potwierdzenie warunków wyślemy e-mailem w odpowiedzi na zamówienie; umowa zostaje zawarta po Twojej akceptacji tych warunków.";
+  payMethod.textContent = "Płatność online przez operatora " + PAY_OPERATOR +
+    " — BLIK, karta płatnicza, Apple Pay lub Google Pay, zależnie od dostępności u operatora. Po kliknięciu przycisku przejdziesz na stronę płatności operatora.";
 
-  function mailOrder(early) {
-    const subject = "Zamówienie: e-book Creative AI Branding Course";
-    const body = [
-      "Dzień dobry,",
-      "",
-      "zamawiam e-book „Creative AI Branding Course” wraz z bonusem „Zestaw ratunkowy dla nieudanych generacji AI” (pliki PDF)" +
-        (PRICE ? " w cenie " + currentPrice + (promoOn ? " z kodem " + PROMO.code + " (cena regularna " + PRICE + ")" : "") : "") + ".",
-      "",
-      "Zapoznałam/-em się z Regulaminem sklepu claure.pl (https://claure.pl/regulamin/) i akceptuję jego treść.",
-      early
-        ? "Żądam dostarczenia E-booka przed upływem 14 dni od zawarcia umowy, wyrażam uprzednią i wyraźną zgodę na rozpoczęcie dostarczania oraz przyjmuję do wiadomości, że z chwilą dostarczenia E-booka i spełnienia świadczenia utracę prawo odstąpienia od umowy."
-        : "Nie żądam dostarczenia E-booka przed upływem 14 dni od zawarcia umowy.",
-      "",
-      "Proszę o potwierdzenie warunków zamówienia i przesłanie danych do płatności.",
-      "",
-      "Imię i nazwisko: ",
-      "Dane do faktury (jeśli potrzebna): "
-    ].join("\n");
-    return "mailto:studio@claure.pl?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-  }
-
+  /* Zakup tylko przez Stripe. Przycisk działa dopiero po zaznaczeniu obu pól:
+     akceptacji regulaminu i oświadczenia o dostarczeniu przed upływem 14 dni
+     (bez tego oświadczenia nie wolno wysłać e-booka od razu po płatności). */
   function updateOrder() {
-    btn.setAttribute("aria-disabled", c1.checked ? "false" : "true");
-    c2Hint.hidden = c2.checked;
-    if (payUrl && c2.checked) {
-      btn.textContent = "Kupuję i płacę";
+    const ready = !!payUrl && c1.checked && c2.checked;
+    btn.setAttribute("aria-disabled", ready ? "false" : "true");
+    c2Hint.hidden = c1.checked && c2.checked;
+    if (ready) {
       btn.href = payUrl; btn.target = "_blank"; btn.rel = "noopener";
       payNote.textContent = "Zamówienie z obowiązkiem zapłaty · płatność online" + (operatorShort ? " · " + operatorShort : "");
     } else {
-      btn.textContent = "Zamawiam przez e-mail";
-      btn.href = mailOrder(c2.checked); btn.removeAttribute("target"); btn.removeAttribute("rel");
+      btn.href = "#zamowienie"; btn.removeAttribute("target"); btn.removeAttribute("rel");
       payNote.textContent = payUrl
-        ? "Bez zgody na wcześniejsze dostarczenie zamówienie obsłużymy mailowo"
-        : "Płatność online już wkrótce · na razie zamówienia mailowo";
+        ? "Aby zapłacić, zaznacz oba pola powyżej"
+        : "Płatność online chwilowo niedostępna";
     }
   }
   c1.addEventListener("change", updateOrder);
   c2.addEventListener("change", updateOrder);
   btn.addEventListener("click", e => {
-    if (btn.getAttribute("aria-disabled") === "true") { e.preventDefault(); c1.focus(); }
+    if (btn.getAttribute("aria-disabled") === "true") { e.preventDefault(); (c1.checked ? c2 : c1).focus(); }
   });
   updateOrder();
 
