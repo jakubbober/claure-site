@@ -783,14 +783,14 @@
      Adres powrotu po płatności (do podania operatorowi): https://claure.pl/dziekujemy/
      ———————————————————————————————————————————————— */
   const PRICE = "1200 zł";
-  const PAYMENT_URL = "";
+  const PAYMENT_URL = "https://buy.stripe.com/28E28j55saGj8KxclkaZi00";
   const PAY_OPERATOR = "Stripe (Stripe Payments Europe, Ltd.)";
   const PROMO = {
     code: "PREMIERA",
     price: "1080 zł",
-    start: "",
+    start: "2026-10-11",
     days: 7,
-    lowest: "1080 zł",
+    lowest: "1200 zł",
     url: ""
   };
 
@@ -844,7 +844,7 @@
 
   payMethod.textContent = payUrl
     ? "Płatność online przez operatora " + (PAY_OPERATOR || "wskazanego przed przekierowaniem") +
-      " — BLIK, karta płatnicza, Przelewy24, Apple Pay lub Google Pay, zależnie od dostępności u operatora. Po kliknięciu przycisku przejdziesz na stronę płatności operatora."
+      " — BLIK, karta płatnicza, Apple Pay lub Google Pay, zależnie od dostępności u operatora. Po kliknięciu przycisku przejdziesz na stronę płatności operatora."
     : "Przelew bankowy na rachunek Fundacji AIP. Dane do przelewu i potwierdzenie warunków wyślemy e-mailem w odpowiedzi na zamówienie; umowa zostaje zawarta po Twojej akceptacji tych warunków.";
 
   function mailOrder(early) {
