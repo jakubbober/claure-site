@@ -785,6 +785,10 @@
      ———————————————————————————————————————————————— */
   const PRICE = "1200 zł";
   const PAYMENT_URL = "https://buy.stripe.com/28E28j55saGj8KxclkaZi00";
+  /* Znacznik dla automatycznej wysyłki (serwis claure-sklep): płatność z tym
+     client_reference_id przyszła z claure.pl, gdzie klient zaznaczył oba pola,
+     więc e-book można wysłać od razu. Musi się zgadzać z CONSENT_REF w serwisie. */
+  const CONSENT_REF = "claurepl_zgoda";
   const PAY_OPERATOR = "Stripe (Stripe Payments Europe, Ltd.)";
   const PROMO = {
     code: "PREMIERA",
@@ -820,8 +824,8 @@
     return u.toString();
   };
   const payUrl = promoOn
-    ? withParams(PROMO.url || PAYMENT_URL, { prefilled_promo_code: PROMO.url ? "" : PROMO.code, locale: "pl" })
-    : withParams(PAYMENT_URL, { locale: "pl" });
+    ? withParams(PROMO.url || PAYMENT_URL, { prefilled_promo_code: PROMO.url ? "" : PROMO.code, locale: "pl", client_reference_id: CONSENT_REF })
+    : withParams(PAYMENT_URL, { locale: "pl", client_reference_id: CONSENT_REF });
   const operatorShort = PAY_OPERATOR.split(" (")[0];
   const currentPrice = promoOn ? PROMO.price : PRICE;
   const fmtPrice = p => p.replace(/(zł|PLN)/i, "<small>$1</small>");
